@@ -45,7 +45,7 @@ const getRooms = async (req: Request, res: Response) => {
             isActive: true,
           },
           orderBy: {
-            createdAt: "asc",
+            fromTime: "asc",
           },
         },
       },
