@@ -22,12 +22,34 @@ const getBookings = async (req: Request, res: Response) => {
 
   currentDate.setUTCHours(0, 0, 0, 0);
 
+  const currentTime = new Date();
+
+  currentTime.setUTCSeconds(0, 0);
+
   try {
     const bookings = await prisma.booking.findMany({
       where: {
         roomId: roomId,
         date: currentDate,
+        OR: [
+          {
+            fromTime: {
+              gte: currentTime,
+            },
+          },
+          {
+            toTime: {
+              gte: currentTime,
+            },
+          },
+        ],
         isActive: true,
+      },
+      include: {
+        user: true,
+      },
+      orderBy: {
+        fromTime: "asc",
       },
     });
 

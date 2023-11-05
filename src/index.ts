@@ -1,7 +1,10 @@
 import "./config";
 
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Express } from "express";
+import { authenticateJWTToken } from "./middlewares/jwt";
+import authRoutes from "./routes/authRoutes";
 import bookingRoutes from "./routes/bookingRoutes";
 import locationRoutes from "./routes/locationRoutes";
 import organizationRoutes from "./routes/organizationRoutes";
@@ -26,12 +29,16 @@ app.use(
   })
 );
 
-app.use("/api/organizations", organizationRoutes);
+app.use(cookieParser());
 
-app.use("/api/locations", locationRoutes);
+app.use("/api/auth", authRoutes);
 
-app.use("/api/rooms", roomRoutes);
+app.use("/api/organizations", authenticateJWTToken, organizationRoutes);
 
-app.use("/api/bookings", bookingRoutes);
+app.use("/api/locations", authenticateJWTToken, locationRoutes);
+
+app.use("/api/rooms", authenticateJWTToken, roomRoutes);
+
+app.use("/api/bookings", authenticateJWTToken, bookingRoutes);
 
 app.listen(port);
